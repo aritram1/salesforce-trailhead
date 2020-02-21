@@ -1,0 +1,35 @@
+//trailhead : https://trailhead.salesforce.com/content/learn/modules/asynchronous_apex/async_apex_future_methods
+public class AccountProcessor{
+    @future 
+    public static void countContacts(List<Id> accountIds){        
+        List<Account> updateAccounts = [SELECT id, Number_of_Contacts__c , (SELECT id from Contacts) from Account where id in :accountIds];
+        for(Account a : updateAccounts){
+            a.Number_of_Contacts__c = a.contacts.size();            
+        }
+        update updateAccounts;
+    }
+    
+    /* ========================================================================================
+    @future
+    public static void countContacts(List<Id> accountIds){    
+        Map<Id, List<Contact>> MapContactsPerAccount = getData(accountIds);
+        for(Id id : MapContactsPerAccount.KeySet()){
+            Account a = new Account(id = id);
+            a.Number_of_Contacts__c = MapContactsPerAccount.get(a.id).size();           
+        }
+    }
+    public static Map<Id, List<Contact>> getData(List<Id> accountIds){
+        Map<Id, List<Contact>> MapContactsPerAccount = new Map<Id, List<Contact>>();
+        for (Contact c : [SELECT id, accountId from Contact where accountId in :accountIds]){
+            List<Contact> temp = MapContactsPerAccount.get(c.accountId);
+            if(temp == null){
+                List<Contact> temp = new List<Contact>();
+            }
+            temp.add(c);
+            MapContactsPerAccount.put(c.accountId, temp);
+        }
+        return MapContactsPerAccount;
+    }    
+    ===========================================================================================*/ 
+    
+}
